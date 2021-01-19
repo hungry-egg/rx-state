@@ -9,5 +9,8 @@
     "build": "rollup -c",
     "watch": "rollup -cw",
     "test": "jest"
+  },
+  "dependencies": {
+    "rxjs": "^6.6.3"
   }
 }
