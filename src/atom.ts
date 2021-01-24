@@ -1,4 +1,5 @@
 import { BehaviorSubject } from "rxjs";
+import { map } from "rxjs/operators";
 
 export class Atom<T> extends BehaviorSubject<T> {
   get = this.getValue;
@@ -7,6 +8,11 @@ export class Atom<T> extends BehaviorSubject<T> {
 
   update(updater: (value: T) => T) {
     this.next(updater(this.getValue()));
+  }
+
+  // mapper function
+  map<TMapperReturnValue>(mapper: (value: T) => TMapperReturnValue) {
+    return this.pipe(map(mapper));
   }
 }
 
