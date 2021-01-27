@@ -1,5 +1,10 @@
 import { combineLatest, Observable, ObservedValueOf } from "rxjs";
-import { map, publishReplay, refCount } from "rxjs/operators";
+import {
+  distinctUntilChanged,
+  map,
+  publishReplay,
+  refCount,
+} from "rxjs/operators";
 
 function arrayToLookup(keys: string[], values: any[]) {
   const mem: { [key: string]: any } = {};
@@ -127,5 +132,5 @@ export function combine(
       })
     );
   }
-  return stream$.pipe(publishReplay(1), refCount());
+  return stream$.pipe(publishReplay(1), refCount(), distinctUntilChanged());
 }

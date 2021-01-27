@@ -59,4 +59,17 @@ describe("combine", () => {
     index$.set(0);
     expect(mapper).toHaveBeenCalledTimes(0);
   });
+
+  it("doesn't call subscription if it hasn't changed", () => {
+    index$.set(1);
+    const name$ = combine([names$, index$], ([names, index]) => names[index]);
+    const cb = jest.fn();
+    const sub = name$.subscribe(cb);
+    cb.mockClear();
+
+    index$.set(1);
+    expect(cb).not.toHaveBeenCalled();
+
+    sub.unsubscribe();
+  });
 });

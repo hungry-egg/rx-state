@@ -10,7 +10,6 @@ export class Atom<T> extends BehaviorSubject<T> {
     this.next(updater(this.getValue()));
   }
 
-  // mapper function
   map<TMapperReturnValue>(mapper: (value: T) => TMapperReturnValue) {
     return this.pipe(map(mapper));
   }
