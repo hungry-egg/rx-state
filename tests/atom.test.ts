@@ -30,4 +30,21 @@ describe("atom", () => {
       expect(get(square$)).toEqual(9);
     });
   });
+
+  describe("destroy", () => {
+    it("stops sending to subscribers", () => {
+      const counter$ = atom(3);
+      const cb = jest.fn();
+      counter$.subscribe(cb);
+
+      counter$.set(7);
+      expect(cb).toHaveBeenCalledWith(7);
+
+      counter$.destroy();
+
+      cb.mockClear();
+      counter$.set(134);
+      expect(cb).not.toHaveBeenCalled();
+    });
+  });
 });

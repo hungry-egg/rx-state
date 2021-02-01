@@ -13,6 +13,8 @@ export class Atom<T> extends BehaviorSubject<T> {
   map<TMapperReturnValue>(mapper: (value: T) => TMapperReturnValue) {
     return this.pipe(map(mapper));
   }
+
+  destroy = this.complete;
 }
 
 export function atom<T>(value: T) {
