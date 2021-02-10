@@ -1,9 +1,6 @@
 {
   "name": "@ixd-group/state-utils",
   "version": "0.0.0",
-  "publishConfig": {
-    "registry": "https://git.bskyb.com/api/v4/projects/10398/packages/npm/"
-  },
   "description": "State Utils - helpers for managing state, based on RxJS",
   "module": "dist/index.es.js",
   "types": "dist/index.d.ts",
