@@ -1,5 +1,5 @@
 {
-  "name": "@skyixd/state-utils",
+  "name": "@ixd-group/state-utils",
   "version": "0.0.0",
   "description": "State Utils - helpers for managing state, based on RxJS",
   "module": "dist/index.es.js",
