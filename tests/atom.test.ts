@@ -1,3 +1,4 @@
+import { map } from "rxjs/operators";
 import { atom } from "../src/atom";
 import { get } from "../src/get";
 
@@ -28,6 +29,17 @@ describe("atom", () => {
       const counter$ = atom(3);
       const square$ = counter$.map((i) => i * i);
       expect(get(square$)).toEqual(9);
+    });
+  });
+
+  describe("pipe", () => {
+    it("allows piping", () => {
+      const counter$ = atom(7);
+      const square$ = counter$.pipe(
+        map((i) => i * i),
+        map((i) => i + 1)
+      );
+      expect(get(square$)).toEqual(50);
     });
   });
 
