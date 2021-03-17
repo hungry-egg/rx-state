@@ -1,2 +1,7 @@
-const baseConfig = require("../../jest.config.base");
-module.exports = baseConfig;
+module.exports = {
+  roots: ["src", "tests"],
+  transform: { "\\.ts$": "ts-jest" },
+  testRegex: "\\.test\\.ts$",
+  moduleFileExtensions: ["ts", "js", "json"],
+  modulePaths: ["<rootDir>/src"],
+};

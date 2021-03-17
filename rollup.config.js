@@ -10,6 +10,7 @@ export default {
       file: pkg.module,
       format: "esm",
     },
+    { file: pkg.main },
   ],
   plugins: [
     nodeResolve(),
