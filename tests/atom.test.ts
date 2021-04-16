@@ -37,9 +37,26 @@ describe("atom", () => {
       const counter$ = atom(7);
       const square$ = counter$.pipe(
         map((i) => i * i),
-        map((i) => i + 1)
+        map((i) => i + 1),
       );
       expect(get(square$)).toEqual(50);
+    });
+  });
+
+  describe("readonly", () => {
+    it("returns a readonly version", () => {
+      const counter$ = atom(4),
+        readonlyCounter$ = counter$.readonly();
+
+      expect('set' in readonlyCounter$).toBeFalsy();
+      counter$.set(7);
+      expect(readonlyCounter$.get()).toEqual(7);
+
+      const cb = jest.fn(),
+        sub = readonlyCounter$.subscribe(cb);
+      expect(cb).toHaveBeenCalledWith(7);
+      sub.unsubscribe();
+
     });
   });
 
