@@ -1,6 +1,5 @@
 import { BehaviorSubject, Subject } from "rxjs";
 import { map } from "rxjs/operators";
-import { atom } from "../src/atom";
 import { get } from "../src/get";
 
 describe("get", () => {
@@ -9,13 +8,6 @@ describe("get", () => {
     jest.spyOn(bs, "subscribe");
     expect(get(bs)).toEqual(4);
     expect(bs.subscribe).not.toHaveBeenCalled();
-  });
-
-  it("gets from an atom", () => {
-    const num$ = atom(4);
-    jest.spyOn(num$, "subscribe");
-    expect(get(num$)).toEqual(4);
-    expect(num$.subscribe).not.toHaveBeenCalled();
   });
 
   it("gets from a synchronous observable", () => {

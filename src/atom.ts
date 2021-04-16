@@ -48,8 +48,6 @@ export class WritableAtom<T> {
     return this.source.getValue();
   }
 
-  getValue = this.get;
-
   set(value: T) {
     this.source.next(value);
   }
