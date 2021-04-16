@@ -1,6 +1,5 @@
 import { WritableAtom, atom } from "../src/atom";
 import { combine } from "../src/combine";
-//import { get } from "../src/get";
 
 describe("combine", () => {
   let names$: WritableAtom<string[]>, index$: WritableAtom<number>;
