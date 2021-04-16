@@ -25,10 +25,10 @@ describe("atom", () => {
   });
 
   describe("map", () => {
-    it("allows mapping the value", () => {
+    it("allows mapping the value to another atom", () => {
       const counter$ = atom(3);
       const square$ = counter$.map((i) => i * i);
-      expect(get(square$)).toEqual(9);
+      expect(square$.get()).toEqual(9);
     });
   });
 

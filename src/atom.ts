@@ -57,7 +57,7 @@ export class WritableAtom<T> {
   }
 
   map<TMapperReturnValue>(mapper: (value: T) => TMapperReturnValue) {
-    return this.pipe(map(mapper));
+    return new ReadonlyAtom<TMapperReturnValue>(this.pipe(map(mapper)));
   }
 
   // @ts-ignore - TODO: fix this
