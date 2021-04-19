@@ -1,5 +1,5 @@
 import { map } from "rxjs/operators";
-import { atom } from "../src/atom";
+import { atom, readonlyAtom } from "../src/atom";
 import { get } from "../src/get";
 
 describe("atom", () => {
@@ -67,6 +67,13 @@ describe("atom", () => {
       expect(cb).toHaveBeenCalledWith(7);
       sub.unsubscribe();
 
+    });
+
+    it("creates a readonly version with readonlyAtom", () => {
+      const [count$, setCount] = readonlyAtom(4);
+      expect('set' in count$).toBeFalsy();
+      setCount(7);
+      expect(count$.get()).toEqual(7);
     });
   });
 });
