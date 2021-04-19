@@ -24,6 +24,16 @@ describe("atom", () => {
     sub.unsubscribe();
   });
 
+  it("only updates subscribers when actually changed (using ===)", () => {
+    const counter$ = atom(4);
+    const cb = jest.fn();
+    const sub = counter$.subscribe(cb);
+    cb.mockReset();
+    counter$.set(4);
+    expect(cb).not.toHaveBeenCalled();
+    sub.unsubscribe();
+  });
+
   describe("map", () => {
     it("allows mapping the value to another atom", () => {
       const counter$ = atom(3);

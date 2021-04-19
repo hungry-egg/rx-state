@@ -1,5 +1,5 @@
 import { BehaviorSubject, Observable, observable } from "rxjs";
-import { map } from "rxjs/operators";
+import { distinctUntilChanged, map } from "rxjs/operators";
 import { get } from "./get";
 
 export class ReadonlyAtom<T> {
@@ -38,18 +38,20 @@ export class WritableAtom<T> {
     return this.source;
   }
 
-  private source: BehaviorSubject<T>;
+  private bs: BehaviorSubject<T>;
+  private source: Observable<T>;
 
-  constructor(source: BehaviorSubject<T>) {
-    this.source = source;
+  constructor(bs: BehaviorSubject<T>) {
+    this.bs = bs;
+    this.source = bs.pipe(distinctUntilChanged());
   }
 
   get() {
-    return this.source.getValue();
+    return this.bs.getValue();
   }
 
   set(value: T) {
-    this.source.next(value);
+    this.bs.next(value);
   }
 
   update(updater: (value: T) => T) {
@@ -70,7 +72,7 @@ export class WritableAtom<T> {
     return this.source.subscribe(callback);
   }
 
-  readonly() { return new ReadonlyAtom<T>(this.source.asObservable()); }
+  readonly() { return new ReadonlyAtom<T>(this.source); }
 }
 
 export type Atom<T> = WritableAtom<T> | ReadonlyAtom<T>;
