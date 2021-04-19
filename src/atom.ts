@@ -70,10 +70,6 @@ export class WritableAtom<T> {
     return this.source.subscribe(callback);
   }
 
-  destroy() {
-    this.source.complete();
-  }
-
   readonly() { return new ReadonlyAtom<T>(this.source.asObservable()); }
 }
 
