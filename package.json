@@ -1,6 +1,6 @@
 {
   "name": "@ixd-group/rx-utils",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "description": "Rx Utils - helpers for managing state, based on RxJS",
   "main": "dist/index.js",
   "module": "dist/index.es.js",
