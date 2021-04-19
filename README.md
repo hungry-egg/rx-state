@@ -61,6 +61,34 @@ $name.destroy()                        // rarely used but can use to remove all 
 
 The `ReadonlyAtom` is similar but only has `get`, `map`, `pipe` and `subscribe`.
 
+### `readonlyAtom`
+This is a convenience method for creating a read-only atom, that also yields a setter function.
+```ts
+const [count$, setCount] = readonlyAtom(4);
+count$.get()  // 4 - this is just a ReadonlyAtom
+
+setCount(7);
+count$.get()  // 7
+```
+This would be useful for e.g. using in a class, where the read-only atom is public, but the setter is private:
+```ts
+class Person {
+
+  public name$: ReadonlyAtom<string>;
+  private setName: (name: string) => void
+
+  constructor (initialName: string) {
+    ([this.name$, this.setName] = readonlyAtom(initialName)); // NOTE the parentheses when doing this
+  }
+
+  //... use this.setName("...") internally
+
+}
+
+const person = new Person("Fred");
+person.name$.set("Bubba") // ERROR: name$ is readonly so has no 'set'
+```
+
 ## `combine`
 This combines RxJS observables or atoms in a way that is useful for efficiently using derived values.
 
