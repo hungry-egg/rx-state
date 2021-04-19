@@ -21,7 +21,7 @@ export class ReadonlyAtom<T> {
     return this.pipe(map(mapper));
   }
 
-  // @ts-ignore - TODO: fix this
+  // @ts-ignore - haven't been able to work with args spread and pipe overloads yet
   pipe: Observable<T>["pipe"] = (...args: any[]) => {
     // @ts-ignore
     return this.source.pipe(...args);
@@ -62,7 +62,7 @@ export class WritableAtom<T> {
     return new ReadonlyAtom<TMapperReturnValue>(this.pipe(map(mapper)));
   }
 
-  // @ts-ignore - TODO: fix this
+  // @ts-ignore - haven't been able to work with args spread and pipe overloads yet
   pipe: Observable<T>["pipe"] = (...args: any[]) => {
     // @ts-ignore
     return this.source.pipe(...args);
