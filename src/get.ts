@@ -1,8 +1,10 @@
-import { BehaviorSubject, Observable } from "rxjs";
+import { StateObservable } from "./types";
 
-export function get<T>(obj: Observable<T> | BehaviorSubject<T>) {
+export function get<T>(obj: StateObservable<T>): T {
   if ("getValue" in obj) {
     return obj.getValue();
+  } else if ("get" in obj) {
+    return obj.get();
   } else {
     let value: T;
     let callbackCalled = false;

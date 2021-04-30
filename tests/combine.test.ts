@@ -1,3 +1,4 @@
+import { of } from "rxjs";
 import { WritableAtom, atom } from "../src/atom";
 import { combine } from "../src/combine";
 
@@ -12,6 +13,11 @@ describe("combine", () => {
   it("combines streams", () => {
     const stream$ = combine({ n: names$, i: index$ });
     expect(stream$.get()).toEqual({ n: ["Fred", "Joy", "Nelson"], i: 1 });
+  });
+
+  it("works with a combination of atoms and other streams", () => {
+    const stream$ = combine({ t: of(7), i: index$ });
+    expect(stream$.get()).toEqual({ t: 7, i: 1 });
   });
 
   it("allows mapping", () => {
