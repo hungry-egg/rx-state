@@ -6,37 +6,50 @@ This library provides a very thin wrapper around some RxJS objects that are usef
 
 There are only two main components: `atom` and `combine`.
 
+All functions are importable in the usual way:
+
+```ts
+import { atom } from "@ixd-group/rx-utils";
+```
+
 ## `atom`
-This is very simply a container for *any value that changes*. It's a thin wrapper around an RxJS `BehaviorSubject`.
+
+This is very simply a container for _any value that changes_. It's a thin wrapper around an RxJS `BehaviorSubject`.
 
 Where you'd normally have a static value
+
 ```ts
 const name = "Jerry";
 ```
+
 you simply wrap with `atom`
+
 ```ts
 const name$ = atom("Jerry");
 ```
+
 The `$` at the end is a convention sometimes used to indicate an observable object.
 
 Now you can subscribe to updates with a callback
+
 ```ts
-const sub = name$.subscribe(name =>
-  console.log(`Name is now ${name}`)
-);
+const sub = name$.subscribe((name) => console.log(`Name is now ${name}`));
 ```
 
 so that when it's changed the callback is called
+
 ```ts
 const name$.set("Tom"); // Logs "Name is now Tom"
 ```
 
 To avoid memory leaks you should unsubscribe when finished
+
 ```ts
 sub.unsubscribe();
 ```
 
 The `atom` function returns a `WritableAtom`, which has the following methods:
+
 ```ts
 const $name = atom("Jerry");
 
@@ -62,37 +75,41 @@ $name.destroy()                        // rarely used but can use to remove all 
 The `ReadonlyAtom` is similar but only has `get`, `map`, `pipe` and `subscribe`.
 
 ### `readonlyAtom`
+
 This is a convenience method for creating a read-only atom, that also yields a setter function.
+
 ```ts
 const [count$, setCount] = readonlyAtom(4);
-count$.get()  // 4 - this is just a ReadonlyAtom
+count$.get(); // 4 - this is just a ReadonlyAtom
 
 setCount(7);
-count$.get()  // 7
+count$.get(); // 7
 ```
+
 This would be useful for e.g. using in a class, where the read-only atom is public, but the setter is private:
+
 ```ts
 class Person {
-
   public name$: ReadonlyAtom<string>;
-  private setName: (name: string) => void
+  private setName: (name: string) => void;
 
-  constructor (initialName: string) {
-    ([this.name$, this.setName] = readonlyAtom(initialName)); // NOTE the parentheses when doing this
+  constructor(initialName: string) {
+    [this.name$, this.setName] = readonlyAtom(initialName); // NOTE the parentheses when doing this
   }
 
   //... use this.setName("...") internally
-
 }
 
 const person = new Person("Fred");
-person.name$.set("Bubba") // ERROR: name$ is readonly so has no 'set'
+person.name$.set("Bubba"); // ERROR: name$ is readonly so has no 'set'
 ```
 
 ## `combine`
+
 This combines RxJS observables or atoms in a way that is useful for efficiently using derived values.
 
 If:
+
 - the `atom` is analogous to a [Redux](https://redux.js.org/) store (or part of),
 
 then
@@ -100,60 +117,105 @@ then
 - `combine` is analogous to memoized selectors like [Reselect](https://github.com/reduxjs/reselect).
 
 Given multiple atoms (or other synchronous RxJS observables)
+
 ```ts
 const names$ = atom(["Geoffrey", "Bungle", "George", "Zippy"]);
 const selectedIndex$ = atom(1);
 ```
 
 Then you can combine them into a new observable with a tuple
+
 ```ts
 const selectedName$ = combine(
-  [names$, selectedIndex$],           // tuple of multiple observables
-  ([names, index]) => names[index]    // calculate new value derived from values from observables
+  [names$, selectedIndex$], // tuple of multiple observables
+  ([names, index]) => names[index] // calculate new value derived from values from observables
 );
-selectedName$.get()    // "Bungle"
+selectedName$.get(); // "Bungle"
 ```
 
 or with an object
+
 ```ts
 const selectedName$ = combine(
-  {names: names$, idx: selectedIndex$},   // object lookup of multiple observables
-  ({names, idx}) => names[idx]            // calculate derived value
+  { names: names$, idx: selectedIndex$ }, // object lookup of multiple observables
+  ({ names, idx }) => names[idx] // calculate derived value
 );
-selectedName$.get()    // "Bungle"
+selectedName$.get(); // "Bungle"
 ```
+
 The new observable is efficient in that
+
 - it only makes the calculation (the 2nd argument function) once when any of its input observables have changed
 - it doesn't make the calculation if no-one is subscribing
 
 In both forms you can also call `combine` with no 2nd argument
-```ts
-const selectedName$ = combine(
-  {names: names$, idx: selectedIndex$}
-);    // = an observable that emits {names: string[], idx: number} objects
 
-const selectedName$ = combine(
-  [names$, selectedIndex$]
-);    // = an observable that emits [string[], number] objects
+```ts
+const selectedName$ = combine({ names: names$, idx: selectedIndex$ }); // = an observable that emits {names: string[], idx: number} objects
+
+const selectedName$ = combine([names$, selectedIndex$]); // = an observable that emits [string[], number] objects
 ```
 
 ## `get`
+
 This library provides a convenience method for **synchronously** getting the value from an RxJS observable
+
 ```ts
-get(count$)   // 7
+get(count$); // 7
 ```
+
 This only works in cases where it's able to give its current value synchronously either because
 
-  - it calls subscription callbacks synchronously, or
-  - it's a `BehaviorSubject`
+- it calls subscription callbacks synchronously, or
+- it's a `BehaviorSubject`
 
 Otherwise it will throw an error
 
 ```ts
-const click$ = fromEvent(document, "click")
-get(click$)   // THROWS AN ERROR -
-              //   it doesn't make sense here as click$ is asynchronous
+const click$ = fromEvent(document, "click");
+get(click$); // THROWS AN ERROR -
+//   it doesn't make sense here as click$ is asynchronous
 ```
+
+## React
+
+This library provides the following hooks for easy integration with React
+
+### `useRxState`
+
+Automatically update from one or more `Atom`s or (synchronously emitting) Rx `Observable`s
+
+```tsx
+const ScoreCard = () => {
+  const [name, score] = useRxState([name$, score$]);
+
+  return (
+    <div>
+      {name} has {score} points!
+    </div>
+  );
+};
+```
+
+You can either pass a single observable
+
+```tsx
+const name = useRxState(name$);
+```
+
+...or a tuple...
+
+```tsx
+const [name, score] = useRxState([name$, score$]);
+```
+
+...or a lookup...
+
+```tsx
+const { name, theScore } = useRxState({ name: name$, theScore: score$ });
+```
+
+...in each case the returned values are correctly typed.
 
 ## Build
 
