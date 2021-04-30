@@ -1,4 +1,4 @@
-# State Utils
+# Rx Utils
 
 State management utilities based on RxJS
 
