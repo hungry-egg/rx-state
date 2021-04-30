@@ -1,4 +1,10 @@
-export { atom, readonlyAtom, Atom, WritableAtom, ReadonlyAtom } from "./atom";
+// Types
+export * from "./types";
+
+// Basic functions
+export { atom, readonlyAtom } from "./atom";
 export { combine } from "./combine";
 export { get } from "./get";
-export { StateObservable } from "./types";
+
+// React
+export { useRxState } from "./react/useRxState";
