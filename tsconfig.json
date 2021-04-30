@@ -14,6 +14,7 @@
     "resolveJsonModule": true,
     "baseUrl": "src",
     "declaration": true,
-    "declarationDir": "dist"
+    "declarationDir": "dist",
+    "jsx": "react"
   }
 }
