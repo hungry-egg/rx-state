@@ -20,59 +20,57 @@ function arrayToLookup(keys: string[], values: any[]) {
   }, mem);
 }
 
-export type StateObservable<T> = Observable<T> | BehaviorSubject<T> | Atom<T>;
+export type StateObservable<T = any> =
+  | Observable<T>
+  | BehaviorSubject<T>
+  | Atom<T>;
 
-export type ObservableLookup = { [name: string]: StateObservable<any> };
+export type ObservableLookup = { [name: string]: StateObservable };
 
-// Can't seem to find a way to use StateObservable<any>[] or [...StateObservable<any>[]]
+// Can't seem to find a way to use StateObservable[] or [...StateObservable[]]
 //   in a way that doesn't lose type information.
 // For example, when unwrapping [StateObservable<boolean>, StateObservable<string>],
 //   we want [boolean, string], NOT (boolean | string)[]
 // This seems the only way to keep that type information, so for now,
 //   just allow up to 8 in the tuple.
 export type ObservableTuple =
-  | [StateObservable<any>]
-  | [StateObservable<any>, StateObservable<any>]
-  | [StateObservable<any>, StateObservable<any>, StateObservable<any>]
+  | [StateObservable]
+  | [StateObservable, StateObservable]
+  | [StateObservable, StateObservable, StateObservable]
+  | [StateObservable, StateObservable, StateObservable, StateObservable]
   | [
-      StateObservable<any>,
-      StateObservable<any>,
-      StateObservable<any>,
-      StateObservable<any>
+      StateObservable,
+      StateObservable,
+      StateObservable,
+      StateObservable,
+      StateObservable
     ]
   | [
-      StateObservable<any>,
-      StateObservable<any>,
-      StateObservable<any>,
-      StateObservable<any>,
-      StateObservable<any>
+      StateObservable,
+      StateObservable,
+      StateObservable,
+      StateObservable,
+      StateObservable,
+      StateObservable
     ]
   | [
-      StateObservable<any>,
-      StateObservable<any>,
-      StateObservable<any>,
-      StateObservable<any>,
-      StateObservable<any>,
-      StateObservable<any>
+      StateObservable,
+      StateObservable,
+      StateObservable,
+      StateObservable,
+      StateObservable,
+      StateObservable,
+      StateObservable
     ]
   | [
-      StateObservable<any>,
-      StateObservable<any>,
-      StateObservable<any>,
-      StateObservable<any>,
-      StateObservable<any>,
-      StateObservable<any>,
-      StateObservable<any>
-    ]
-  | [
-      StateObservable<any>,
-      StateObservable<any>,
-      StateObservable<any>,
-      StateObservable<any>,
-      StateObservable<any>,
-      StateObservable<any>,
-      StateObservable<any>,
-      StateObservable<any>
+      StateObservable,
+      StateObservable,
+      StateObservable,
+      StateObservable,
+      StateObservable,
+      StateObservable,
+      StateObservable,
+      StateObservable
     ];
 
 // StateObservable<number> ----> number
@@ -95,6 +93,14 @@ export type UnwrapObservableTuple<TObservables extends ObservableTuple> = {
     ? TValue
     : never;
 };
+
+export type UnwrapAny<TObs> = TObs extends StateObservable
+  ? UnwrapObservable<TObs>
+  : TObs extends ObservableTuple
+  ? UnwrapObservableTuple<TObs>
+  : TObs extends ObservableLookup
+  ? UnwrapObservableLookup<TObs>
+  : never;
 
 // Signature with lookup
 export function combine<TObservableLookup extends ObservableLookup>(
