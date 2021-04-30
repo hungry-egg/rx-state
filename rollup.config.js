@@ -23,4 +23,5 @@ export default {
       abortOnError: false,
     }),
   ],
+  external: Object.keys(pkg.peerDependencies)
 };
