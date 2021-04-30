@@ -1,5 +1,10 @@
 import { Atom, ReadonlyAtom } from "./atom";
-import { combineLatest, Observable, ObservedValueOf } from "rxjs";
+import {
+  combineLatest,
+  ObservedValueOf,
+  Observable,
+  BehaviorSubject,
+} from "rxjs";
 import {
   distinctUntilChanged,
   map,
@@ -8,84 +13,87 @@ import {
 } from "rxjs/operators";
 
 function arrayToLookup(keys: string[], values: any[]) {
-  const mem: { [key: string]: any; } = {};
+  const mem: { [key: string]: any } = {};
   return keys.reduce((memo, key, i) => {
     memo[key] = values[i];
     return memo;
   }, mem);
 }
 
-type SyncObservable<T> = Observable<T> | Atom<T> | ReadonlyAtom<T>;
+export type StateObservable<T> = Observable<T> | BehaviorSubject<T> | Atom<T>;
 
-type ObservableLookup = { [name: string]: SyncObservable<any>; };
-// Can't seem to find a way to use SyncObservable<any>[] or [...SyncObservable<any>[]]
+export type ObservableLookup = { [name: string]: StateObservable<any> };
+
+// Can't seem to find a way to use StateObservable<any>[] or [...StateObservable<any>[]]
 //   in a way that doesn't lose type information.
-// For example, when unwrapping [SyncObservable<boolean>, SyncObservable<string>],
+// For example, when unwrapping [StateObservable<boolean>, StateObservable<string>],
 //   we want [boolean, string], NOT (boolean | string)[]
 // This seems the only way to keep that type information, so for now,
 //   just allow up to 8 in the tuple.
-type ObservableTuple =
-  | [SyncObservable<any>]
-  | [SyncObservable<any>, SyncObservable<any>]
-  | [SyncObservable<any>, SyncObservable<any>, SyncObservable<any>]
+export type ObservableTuple =
+  | [StateObservable<any>]
+  | [StateObservable<any>, StateObservable<any>]
+  | [StateObservable<any>, StateObservable<any>, StateObservable<any>]
   | [
-    SyncObservable<any>,
-    SyncObservable<any>,
-    SyncObservable<any>,
-    SyncObservable<any>
-  ]
+      StateObservable<any>,
+      StateObservable<any>,
+      StateObservable<any>,
+      StateObservable<any>
+    ]
   | [
-    SyncObservable<any>,
-    SyncObservable<any>,
-    SyncObservable<any>,
-    SyncObservable<any>,
-    SyncObservable<any>
-  ]
+      StateObservable<any>,
+      StateObservable<any>,
+      StateObservable<any>,
+      StateObservable<any>,
+      StateObservable<any>
+    ]
   | [
-    SyncObservable<any>,
-    SyncObservable<any>,
-    SyncObservable<any>,
-    SyncObservable<any>,
-    SyncObservable<any>,
-    SyncObservable<any>
-  ]
+      StateObservable<any>,
+      StateObservable<any>,
+      StateObservable<any>,
+      StateObservable<any>,
+      StateObservable<any>,
+      StateObservable<any>
+    ]
   | [
-    SyncObservable<any>,
-    SyncObservable<any>,
-    SyncObservable<any>,
-    SyncObservable<any>,
-    SyncObservable<any>,
-    SyncObservable<any>,
-    SyncObservable<any>
-  ]
+      StateObservable<any>,
+      StateObservable<any>,
+      StateObservable<any>,
+      StateObservable<any>,
+      StateObservable<any>,
+      StateObservable<any>,
+      StateObservable<any>
+    ]
   | [
-    SyncObservable<any>,
-    SyncObservable<any>,
-    SyncObservable<any>,
-    SyncObservable<any>,
-    SyncObservable<any>,
-    SyncObservable<any>,
-    SyncObservable<any>,
-    SyncObservable<any>
-  ];
+      StateObservable<any>,
+      StateObservable<any>,
+      StateObservable<any>,
+      StateObservable<any>,
+      StateObservable<any>,
+      StateObservable<any>,
+      StateObservable<any>,
+      StateObservable<any>
+    ];
 
-// SyncObservable<number> ----> number
-type UnwrapObservable<Obs> = Obs extends Atom<infer T> ? T : ObservedValueOf<Obs>;
+// StateObservable<number> ----> number
+export type UnwrapObservable<Obs> = Obs extends Atom<infer T>
+  ? T
+  : ObservedValueOf<Obs>;
 
-// { a: SyncObservable<number>, b: SyncObservable<string> } ----> { a: number, b: string }
-type UnwrapObservableLookup<
+// { a: StateObservable<number>, b: StateObservable<string> } ----> { a: number, b: string }
+export type UnwrapObservableLookup<
   TObservableLookup extends ObservableLookup | ObservableTuple
-  > = {
-    [Key in keyof TObservableLookup]: UnwrapObservable<TObservableLookup[Key]>;
-  };
+> = {
+  [Key in keyof TObservableLookup]: UnwrapObservable<TObservableLookup[Key]>;
+};
 
-// [ SyncObservable<number>, SyncObservable<string> ] ----> [ number, string ]
-type UnwrapObservableTuple<TObservables extends ObservableTuple> = {
-  [Index in keyof TObservables]: TObservables[Index] extends SyncObservable<
+// [ StateObservable<number>, StateObservable<string> ] ----> [ number, string ]
+export type UnwrapObservableTuple<TObservables extends ObservableTuple> = {
+  [Index in keyof TObservables]: TObservables[Index] extends StateObservable<
     infer TValue
   >
-  ? TValue
-  : never;
+    ? TValue
+    : never;
 };
 
 // Signature with lookup
@@ -138,5 +146,7 @@ export function combine(
       })
     );
   }
-  return new ReadonlyAtom(stream$.pipe(publishReplay(1), refCount(), distinctUntilChanged()));
+  return new ReadonlyAtom(
+    stream$.pipe(publishReplay(1), refCount(), distinctUntilChanged())
+  );
 }

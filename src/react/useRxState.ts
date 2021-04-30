@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { get } from "../get";
-import { ObservableState } from "../types";
+import { StateObservable } from "../types";
 
-export const useRxState = <T>(state$: ObservableState<T>) => {
+export const useRxState = <T>(state$: StateObservable<T>): T => {
   const [value, setValue] = useState<T>(get(state$));
 
   useEffect(() => {
@@ -12,5 +12,5 @@ export const useRxState = <T>(state$: ObservableState<T>) => {
     };
   });
 
-  return value;
+  return value as T;
 };
