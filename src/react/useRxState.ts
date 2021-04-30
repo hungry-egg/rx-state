@@ -1,16 +1,54 @@
-import { useEffect, useState } from "react";
+import { useState, useEffect, useMemo } from "react";
+import { isObservable } from "rxjs";
+import { combine } from "../combine";
+import { isAtom } from "../isAtom";
 import { get } from "../get";
-import { StateObservable } from "../types";
+import {
+  StateObservable,
+  ObservableLookup,
+  ObservableTuple,
+  UnwrapObservable,
+  UnwrapObservableLookup,
+  UnwrapObservableTuple,
+} from "../types";
 
-export const useRxState = <T>(state$: StateObservable<T>): T => {
-  const [value, setValue] = useState<T>(get(state$));
+type State = StateObservable | ObservableTuple | ObservableLookup;
+
+// Signature with single observable
+export function useRxState<TState extends StateObservable>(
+  state$: TState
+): UnwrapObservable<TState>;
+
+// Signature with lookup
+export function useRxState<TState extends ObservableLookup>(
+  stateLookup: TState
+): UnwrapObservableLookup<TState>;
+
+// Signature with tuple
+export function useRxState<TState extends ObservableTuple>(
+  stateTuple: TState
+): UnwrapObservableTuple<TState>;
+
+// Implementation
+export function useRxState(state: State) {
+  const state$ = useMemo(
+    () =>
+      isAtom(state) || isObservable(state)
+        ? state
+        : Array.isArray(state) // for typescript's sake
+        ? combine(state)
+        : combine(state),
+    []
+  );
+
+  const [value, setValue] = useState(() => get(state$));
 
   useEffect(() => {
     const subscription = state$.subscribe((val) => setValue(val));
     return function cleanup() {
       subscription.unsubscribe();
     };
-  });
+  }, []);
 
-  return value as T;
-};
+  return value;
+}

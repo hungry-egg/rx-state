@@ -41,7 +41,51 @@ describe("useRxState", () => {
     });
   });
 
-  it("allows giving a tuple", () => {});
+  it("allows giving a tuple", () => {
+    const team1$ = atom("Spurs"),
+      score1$ = atom(0),
+      team2$ = atom("Arsenal"),
+      score2$ = atom(0),
+      Team = () => {
+        const [team1, score1, team2, score2] = useRxState([
+          team1$,
+          score1$,
+          team2$,
+          score2$,
+        ]);
+        return (
+          <div data-testid="score">
+            {team1} {score1} - {team2} {score2}
+          </div>
+        );
+      },
+      { getByTestId } = render(<Team />);
 
-  it("allows giving a lookup", () => {});
+    expect(getByTestId("score")).toContainHTML("Spurs 0 - Arsenal 0");
+
+    act(() => score1$.update((s) => s + 1));
+    expect(getByTestId("score")).toContainHTML("Spurs 1 - Arsenal 0");
+  });
+
+  it("allows giving a lookup", () => {
+    const name$ = atom("Sam"),
+      age$ = atom(11),
+      Team = () => {
+        const { name, age } = useRxState({
+          name: name$,
+          age: age$,
+        });
+        return (
+          <div data-testid="person">
+            {name} is {age} years old.
+          </div>
+        );
+      },
+      { getByTestId } = render(<Team />);
+
+    expect(getByTestId("person")).toContainHTML("Sam is 11 years old.");
+
+    act(() => age$.update((a) => a + 1));
+    expect(getByTestId("person")).toContainHTML("Sam is 12 years old.");
+  });
 });
