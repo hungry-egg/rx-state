@@ -1,7 +1,6 @@
-import { Atom } from "atom";
-import { BehaviorSubject, Observable } from "rxjs";
+import { ObservableState } from "./types";
 
-export function get<T>(obj: Observable<T> | BehaviorSubject<T> | Atom<T>): T {
+export function get<T>(obj: ObservableState<T>): T {
   if ("getValue" in obj) {
     return obj.getValue();
   } else if ("get" in obj) {
