@@ -40,6 +40,21 @@ describe("atom", () => {
       const square$ = counter$.map((i) => i * i);
       expect(square$.get()).toEqual(9);
     });
+
+    it("the mapped value uses distinctUntilChanged", () => {
+      const store$ = atom({ users: ["Tracy", "Popo", "Luggy"], index: 0 });
+      const users$ = store$.map(({ users }) => users);
+
+      const sub = jest.fn();
+      users$.subscribe(sub);
+      sub.mockClear();
+
+      store$.update((s) => ({ ...s, users: s.users }));
+      expect(sub).not.toHaveBeenCalled();
+
+      store$.update((s) => ({ ...s, users: [] }));
+      expect(sub).toHaveBeenCalled();
+    });
   });
 
   describe("pipe", () => {
@@ -47,7 +62,7 @@ describe("atom", () => {
       const counter$ = atom(7);
       const square$ = counter$.pipe(
         map((i) => i * i),
-        map((i) => i + 1),
+        map((i) => i + 1)
       );
       expect(get(square$)).toEqual(50);
     });
@@ -58,7 +73,7 @@ describe("atom", () => {
       const counter$ = atom(4),
         readonlyCounter$ = counter$.readonly();
 
-      expect('set' in readonlyCounter$).toBeFalsy();
+      expect("set" in readonlyCounter$).toBeFalsy();
       counter$.set(7);
       expect(readonlyCounter$.get()).toEqual(7);
 
@@ -66,12 +81,11 @@ describe("atom", () => {
         sub = readonlyCounter$.subscribe(cb);
       expect(cb).toHaveBeenCalledWith(7);
       sub.unsubscribe();
-
     });
 
     it("creates a readonly version with readonlyAtom", () => {
       const [count$, setCount] = readonlyAtom(4);
-      expect('set' in count$).toBeFalsy();
+      expect("set" in count$).toBeFalsy();
       setCount(7);
       expect(count$.get()).toEqual(7);
     });

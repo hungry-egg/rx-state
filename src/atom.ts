@@ -10,7 +10,7 @@ export class ReadonlyAtom<T> {
   private source: Observable<T>;
 
   constructor(source: Observable<T>) {
-    this.source = source;
+    this.source = source.pipe(distinctUntilChanged());
   }
 
   get() {
@@ -18,7 +18,7 @@ export class ReadonlyAtom<T> {
   }
 
   map<TMapperReturnValue>(mapper: (value: T) => TMapperReturnValue) {
-    return this.pipe(map(mapper));
+    return new ReadonlyAtom<TMapperReturnValue>(this.pipe(map(mapper)));
   }
 
   // @ts-ignore - haven't been able to work with args spread and pipe overloads yet
@@ -33,7 +33,6 @@ export class ReadonlyAtom<T> {
 }
 
 export class WritableAtom<T> {
-
   [observable]() {
     return this.source;
   }
@@ -72,7 +71,9 @@ export class WritableAtom<T> {
     return this.source.subscribe(callback);
   }
 
-  readonly() { return new ReadonlyAtom<T>(this.source); }
+  readonly() {
+    return new ReadonlyAtom<T>(this.source);
+  }
 }
 
 export type Atom<T> = WritableAtom<T> | ReadonlyAtom<T>;
@@ -81,7 +82,9 @@ export function atom<T>(value: T) {
   return new WritableAtom<T>(new BehaviorSubject<T>(value));
 }
 
-export function readonlyAtom<T>(value: T): [ReadonlyAtom<T>, (value: T) => void] {
+export function readonlyAtom<T>(
+  value: T
+): [ReadonlyAtom<T>, (value: T) => void] {
   const atm = atom(value);
   return [atm.readonly(), atm.set.bind(atm)];
 }
