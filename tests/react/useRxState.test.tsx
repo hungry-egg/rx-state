@@ -88,4 +88,21 @@ describe("useRxState", () => {
     act(() => age$.update((a) => a + 1));
     expect(getByTestId("person")).toContainHTML("Sam is 12 years old.");
   });
+
+  it("allows giving a function for evaluation once", () => {
+    const name$ = atom("Gungedin"),
+      fn = jest.fn(() => name$),
+      Team = () => {
+        const name = useRxState(fn);
+        return <div data-testid="name">My name is {name}.</div>;
+      },
+      { getByTestId } = render(<Team />);
+
+    expect(getByTestId("name")).toContainHTML("My name is Gungedin");
+
+    act(() => name$.set("Lardie"));
+    expect(getByTestId("name")).toContainHTML("My name is Lardie.");
+
+    expect(fn).toHaveBeenCalledTimes(1);
+  });
 });

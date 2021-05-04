@@ -217,6 +217,17 @@ const { name, theScore } = useRxState({ name: name$, theScore: score$ });
 
 ...in each case the returned values are correctly typed.
 
+Also, you can pass a function (that returns a single observable / tuple / lookup as above)
+to avoid creating unnecessary obvservables on every render; the function will only get evaluated once on initialize.
+
+```tsx
+const ScoreCard = () => {
+  const name = useRxState(() => user$.map((u) => u.name));
+
+  return <div>My name is {name}</div>;
+};
+```
+
 ## Build
 
     yarn build

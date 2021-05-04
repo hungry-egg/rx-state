@@ -13,33 +13,33 @@ import {
 } from "../types";
 
 type State = StateObservable | ObservableTuple | ObservableLookup;
+type StateFunction = () => State;
 
 // Signature with single observable
 export function useRxState<TState extends StateObservable>(
-  state$: TState
+  state$: TState | (() => TState)
 ): UnwrapObservable<TState>;
 
 // Signature with lookup
 export function useRxState<TState extends ObservableLookup>(
-  stateLookup: TState
+  stateLookup: TState | (() => TState)
 ): UnwrapObservableLookup<TState>;
 
 // Signature with tuple
 export function useRxState<TState extends ObservableTuple>(
-  stateTuple: TState
+  stateTuple: TState | (() => TState)
 ): UnwrapObservableTuple<TState>;
 
 // Implementation
-export function useRxState(state: State) {
-  const state$ = useMemo(
-    () =>
-      isAtom(state) || isObservable(state)
-        ? state
-        : Array.isArray(state) // for typescript's sake
-        ? combine(state)
-        : combine(state),
-    []
-  );
+export function useRxState(arg: State | StateFunction) {
+  const state$ = useMemo(() => {
+    const state = typeof arg === "function" ? arg() : arg;
+    return isAtom(state) || isObservable(state)
+      ? state
+      : Array.isArray(state) // for typescript's sake
+      ? combine(state)
+      : combine(state);
+  }, []);
 
   const [value, setValue] = useState(() => get(state$));
 
