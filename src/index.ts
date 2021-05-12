@@ -5,6 +5,3 @@ export * from "./types";
 export { atom, readonlyAtom } from "./atom";
 export { combine } from "./combine";
 export { get } from "./get";
-
-// React
-export { useRxState } from "./react/useRxState";

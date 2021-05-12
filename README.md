@@ -183,9 +183,11 @@ This library provides the following hooks for easy integration with React
 
 ### `useRxState`
 
-Automatically update from one or more `Atom`s or (synchronously emitting) Rx `Observable`s
+Automatically update from one or more `Atom`s or (synchronously emitting) Rx `Observable`s (note you import from the `/react` subdirectory)
 
 ```tsx
+import { useRxState } from "@ixd-group/rx-utils/react";
+
 const ScoreCard = () => {
   const [name, score] = useRxState([name$, score$]);
 

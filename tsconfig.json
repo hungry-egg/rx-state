@@ -12,7 +12,6 @@
     "target": "es6",
     "moduleResolution": "node",
     "resolveJsonModule": true,
-    "baseUrl": "src",
     "declaration": true,
     "declarationDir": "dist",
     "jsx": "react"
