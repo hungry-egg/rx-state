@@ -1,6 +1,6 @@
 {
   "name": "@ixd-group/rx-utils",
-  "version": "0.0.12-rc2",
+  "version": "0.0.12-rc3",
   "description": "Rx Utils - helpers for managing state, based on RxJS",
   "main": "dist/index.js",
   "module": "dist/index.es.js",
@@ -10,9 +10,6 @@
     "watch": "rollup -cw",
     "test": "jest",
     "prepublishOnly": "yarn build"
-  },
-  "dependencies": {
-    "rxjs": "^7.0.1"
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^17.1.0",
@@ -26,10 +23,12 @@
     "react-dom": "^17.0.2",
     "rollup": "^2.41.4",
     "rollup-plugin-typescript2": "^0.30.0",
+    "rxjs": "^7.0.1",
     "ts-jest": "^26.5.3",
     "typescript": "^4.2.3"
   },
   "peerDependencies": {
-    "react": "^17.0.2"
+    "react": "^17.0.2",
+    "rxjs": "^7.0.1"
   }
 }
