@@ -12,7 +12,7 @@
     "prepublishOnly": "yarn build"
   },
   "dependencies": {
-    "rxjs": "^6.6.3"
+    "rxjs": "^7.0.1"
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^17.1.0",
