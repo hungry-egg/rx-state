@@ -34,10 +34,6 @@ export default [
         file: "dist/react.es.js",
         format: "esm",
       },
-      {
-        file: "dist/react.js",
-        format: "cjs",
-      },
     ],
     plugins,
     external: Object.keys(pkg.peerDependencies),
