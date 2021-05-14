@@ -4,7 +4,7 @@ import { combine } from "../combine";
 import { isAtom } from "../isAtom";
 import { get } from "../get";
 import {
-  StateObservable,
+  StatefulObservable,
   ObservableLookup,
   ObservableTuple,
   UnwrapObservable,
@@ -12,11 +12,11 @@ import {
   UnwrapObservableTuple,
 } from "../types";
 
-type State = StateObservable | ObservableTuple | ObservableLookup;
+type State = StatefulObservable | ObservableTuple | ObservableLookup;
 type StateFunction = () => State;
 
 // Signature with single observable
-export function useRxState<TState extends StateObservable>(
+export function useRxState<TState extends StatefulObservable>(
   state$: TState | (() => TState)
 ): UnwrapObservable<TState>;
 

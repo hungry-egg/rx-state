@@ -20,81 +20,86 @@ function arrayToLookup(keys: string[], values: any[]) {
   }, mem);
 }
 
-export type StateObservable<T = any> =
+export type StatefulObservable<T = any> =
   | Observable<T>
   | BehaviorSubject<T>
   | Atom<T>;
 
-export type ObservableLookup = { [name: string]: StateObservable };
+export type ObservableLookup = { [name: string]: StatefulObservable };
 
-// Can't seem to find a way to use StateObservable[] or [...StateObservable[]]
+// Can't seem to find a way to use StatefulObservable[] or [...StatefulObservable[]]
 //   in a way that doesn't lose type information.
-// For example, when unwrapping [StateObservable<boolean>, StateObservable<string>],
+// For example, when unwrapping [StatefulObservable<boolean>, StatefulObservable<string>],
 //   we want [boolean, string], NOT (boolean | string)[]
 // This seems the only way to keep that type information, so for now,
 //   just allow up to 8 in the tuple.
 export type ObservableTuple =
-  | [StateObservable]
-  | [StateObservable, StateObservable]
-  | [StateObservable, StateObservable, StateObservable]
-  | [StateObservable, StateObservable, StateObservable, StateObservable]
+  | [StatefulObservable]
+  | [StatefulObservable, StatefulObservable]
+  | [StatefulObservable, StatefulObservable, StatefulObservable]
   | [
-      StateObservable,
-      StateObservable,
-      StateObservable,
-      StateObservable,
-      StateObservable
+      StatefulObservable,
+      StatefulObservable,
+      StatefulObservable,
+      StatefulObservable
     ]
   | [
-      StateObservable,
-      StateObservable,
-      StateObservable,
-      StateObservable,
-      StateObservable,
-      StateObservable
+      StatefulObservable,
+      StatefulObservable,
+      StatefulObservable,
+      StatefulObservable,
+      StatefulObservable
     ]
   | [
-      StateObservable,
-      StateObservable,
-      StateObservable,
-      StateObservable,
-      StateObservable,
-      StateObservable,
-      StateObservable
+      StatefulObservable,
+      StatefulObservable,
+      StatefulObservable,
+      StatefulObservable,
+      StatefulObservable,
+      StatefulObservable
     ]
   | [
-      StateObservable,
-      StateObservable,
-      StateObservable,
-      StateObservable,
-      StateObservable,
-      StateObservable,
-      StateObservable,
-      StateObservable
+      StatefulObservable,
+      StatefulObservable,
+      StatefulObservable,
+      StatefulObservable,
+      StatefulObservable,
+      StatefulObservable,
+      StatefulObservable
+    ]
+  | [
+      StatefulObservable,
+      StatefulObservable,
+      StatefulObservable,
+      StatefulObservable,
+      StatefulObservable,
+      StatefulObservable,
+      StatefulObservable,
+      StatefulObservable
     ];
 
-// StateObservable<number> ----> number
+// StatefulObservable<number> ----> number
 export type UnwrapObservable<Obs> = Obs extends Atom<infer T>
   ? T
   : ObservedValueOf<Obs>;
 
-// { a: StateObservable<number>, b: StateObservable<string> } ----> { a: number, b: string }
+// { a: StatefulObservable<number>, b: StatefulObservable<string> } ----> { a: number, b: string }
 export type UnwrapObservableLookup<
   TObservableLookup extends ObservableLookup | ObservableTuple
 > = {
   [Key in keyof TObservableLookup]: UnwrapObservable<TObservableLookup[Key]>;
 };
 
-// [ StateObservable<number>, StateObservable<string> ] ----> [ number, string ]
+// [ StatefulObservable<number>, StatefulObservable<string> ] ----> [ number, string ]
 export type UnwrapObservableTuple<TObservables extends ObservableTuple> = {
-  [Index in keyof TObservables]: TObservables[Index] extends StateObservable<
+  [Index in keyof TObservables]: TObservables[Index] extends StatefulObservable<
     infer TValue
   >
     ? TValue
     : never;
 };
 
-export type UnwrapAny<TObs> = TObs extends StateObservable
+export type UnwrapAny<TObs> = TObs extends StatefulObservable
   ? UnwrapObservable<TObs>
   : TObs extends ObservableTuple
   ? UnwrapObservableTuple<TObs>

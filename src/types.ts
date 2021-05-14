@@ -1,7 +1,7 @@
 export type { Atom, WritableAtom, ReadonlyAtom } from "./atom";
 
 export type {
-  StateObservable,
+  StatefulObservable,
   ObservableTuple,
   ObservableLookup,
   UnwrapObservable,

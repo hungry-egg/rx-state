@@ -1,6 +1,6 @@
-import { StateObservable } from "./types";
+import { StatefulObservable } from "./types";
 
-export function get<T>(obj: StateObservable<T>): T {
+export function get<T>(obj: StatefulObservable<T>): T {
   if ("getValue" in obj) {
     return obj.getValue();
   } else if ("get" in obj) {
