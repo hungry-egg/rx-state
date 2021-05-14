@@ -1,7 +1,5 @@
-import { Atom, ReadonlyAtom, WritableAtom } from "./atom";
+import { Atom, IS_ATOM } from "./atom";
 
 export const isAtom = (thing: any): thing is Atom<unknown> => {
-  return (
-    thing.constructor === ReadonlyAtom || thing.constructor === WritableAtom
-  );
+  return !!thing[IS_ATOM];
 };

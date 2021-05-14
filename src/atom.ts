@@ -2,10 +2,14 @@ import { BehaviorSubject, Observable, observable } from "rxjs";
 import { distinctUntilChanged, map } from "rxjs/operators";
 import { get } from "./get";
 
+export const IS_ATOM = "@@IS_ATOM";
+
 export class ReadonlyAtom<T> {
   [observable]() {
     return this.source;
   }
+
+  [IS_ATOM] = true;
 
   private source: Observable<T>;
 
@@ -36,6 +40,8 @@ export class WritableAtom<T> {
   [observable]() {
     return this.source;
   }
+
+  [IS_ATOM] = true;
 
   private bs: BehaviorSubject<T>;
   private source: Observable<T>;
