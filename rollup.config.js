@@ -26,6 +26,7 @@ export default [
       },
     ],
     plugins,
+    external: Object.keys(pkg.peerDependencies),
   },
   {
     input: "src/react/index.ts",
