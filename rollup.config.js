@@ -12,31 +12,18 @@ const plugins = [
   }),
 ];
 
-export default [
-  {
-    input: "src/index.ts",
-    output: [
-      {
-        file: pkg.module,
-        format: "esm",
-      },
-      {
-        file: pkg.main,
-        format: "cjs",
-      },
-    ],
-    plugins,
-    external: Object.keys(pkg.peerDependencies),
-  },
-  {
-    input: "src/react/index.ts",
-    output: [
-      {
-        file: "dist/react.es.js",
-        format: "esm",
-      },
-    ],
-    plugins,
-    external: Object.keys(pkg.peerDependencies),
-  },
-];
+export default {
+  input: "src/index.ts",
+  output: [
+    {
+      file: pkg.module,
+      format: "esm",
+    },
+    {
+      file: pkg.main,
+      format: "cjs",
+    },
+  ],
+  plugins,
+  external: Object.keys(pkg.peerDependencies),
+};

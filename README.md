@@ -177,59 +177,6 @@ get(click$); // THROWS AN ERROR -
 //   it doesn't make sense here as click$ is asynchronous
 ```
 
-## React
-
-This library provides the following hooks for easy integration with React
-
-### `useRxState`
-
-Automatically update from one or more `Atom`s or (synchronously emitting) Rx `Observable`s (note you import from the `/react` subdirectory)
-
-```tsx
-import { useRxState } from "@ixd-group/rx-utils/react";
-
-const ScoreCard = () => {
-  const [name, score] = useRxState([name$, score$]);
-
-  return (
-    <div>
-      {name} has {score} points!
-    </div>
-  );
-};
-```
-
-You can either pass a single observable
-
-```tsx
-const name = useRxState(name$);
-```
-
-...or a tuple...
-
-```tsx
-const [name, score] = useRxState([name$, score$]);
-```
-
-...or a lookup...
-
-```tsx
-const { name, theScore } = useRxState({ name: name$, theScore: score$ });
-```
-
-...in each case the returned values are correctly typed.
-
-Also, you can pass a function (that returns a single observable / tuple / lookup as above)
-to avoid creating unnecessary obvservables on every render; the function will only get evaluated once on initialize.
-
-```tsx
-const ScoreCard = () => {
-  const name = useRxState(() => user$.map((u) => u.name));
-
-  return <div>My name is {name}</div>;
-};
-```
-
 ## Build
 
     yarn build
