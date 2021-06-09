@@ -1,6 +1,11 @@
 import { StatefulObservable } from "./types";
 
-export function get<T>(obj: StatefulObservable<T>): T {
+type Gettable<T> =
+  | { getValue: () => T }
+  | { get: () => T }
+  | StatefulObservable<T>;
+
+export function get<T>(obj: Gettable<T>): T {
   if ("getValue" in obj) {
     return obj.getValue();
   } else if ("get" in obj) {
