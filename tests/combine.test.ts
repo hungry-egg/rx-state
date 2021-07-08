@@ -1,5 +1,5 @@
 import { of } from "rxjs";
-import { WritableAtom, atom } from "../src/atom";
+import { WritableAtom, atom, ReadonlyAtom } from "../src/atom";
 import { combine } from "../src/combine";
 
 describe("combine", () => {
@@ -11,27 +11,27 @@ describe("combine", () => {
   });
 
   it("combines streams", () => {
-    const stream$ = combine({ n: names$, i: index$ });
+    const stream$: ReadonlyAtom<{ n: string[], i: number; }> = combine({ n: names$, i: index$ });
     expect(stream$.get()).toEqual({ n: ["Fred", "Joy", "Nelson"], i: 1 });
   });
 
   it("works with a combination of atoms and other streams", () => {
-    const stream$ = combine({ t: of(7), i: index$ });
+    const stream$: ReadonlyAtom<{ t: number, i: number; }> = combine({ t: of(7), i: index$ });
     expect(stream$.get()).toEqual({ t: 7, i: 1 });
   });
 
   it("allows mapping", () => {
-    const name$ = combine({ n: names$, i: index$ }, ({ i, n }) => n[i]);
+    const name$: ReadonlyAtom<string> = combine({ n: names$, i: index$ }, ({ i, n }) => n[i]);
     expect(name$.get()).toEqual("Joy");
   });
 
   it("allows using an array", () => {
-    const stream$ = combine([names$, index$]);
+    const stream$: ReadonlyAtom<[string[], number]> = combine([names$, index$]);
     expect(stream$.get()).toEqual([["Fred", "Joy", "Nelson"], 1]);
   });
 
   it("allows using an array and mapping", () => {
-    const name$ = combine([names$, index$], ([names, index]) => names[index]);
+    const name$: ReadonlyAtom<string> = combine([names$, index$], ([names, index]) => names[index]);
     expect(name$.get()).toEqual("Joy");
   });
 
