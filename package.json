@@ -6,6 +6,9 @@
   "module": "dist/index.es.js",
   "types": "dist/index.d.ts",
   "license": "MIT",
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "rollup -c",
     "watch": "rollup -cw",
