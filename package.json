@@ -1,7 +1,7 @@
 {
-  "name": "@ixd-group/rx-utils",
-  "version": "0.0.18",
-  "description": "Rx Utils - helpers for managing state, based on RxJS",
+  "name": "@hungry-egg/rx-state",
+  "version": "1.0.0",
+  "description": "Rx state utils - helpers for managing state, based on RxJS",
   "main": "dist/index.js",
   "module": "dist/index.es.js",
   "types": "dist/index.d.ts",
