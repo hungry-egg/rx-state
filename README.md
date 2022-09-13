@@ -1,4 +1,4 @@
-# @rx-utils/state
+# @hungry-egg/rx-state
 
 State management utilities based on RxJS
 
@@ -9,7 +9,7 @@ There are only two main components: `atom` and `combine`.
 All functions are importable in the usual way:
 
 ```ts
-import { atom } from "@rx-utils/state";
+import { atom } from "@hungry-egg/rx-state";
 ```
 
 ## `atom`
