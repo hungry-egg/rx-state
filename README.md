@@ -1,4 +1,4 @@
-# Rx Utils
+# @rx-utils/state
 
 State management utilities based on RxJS
 
@@ -9,7 +9,7 @@ There are only two main components: `atom` and `combine`.
 All functions are importable in the usual way:
 
 ```ts
-import { atom } from "@ixd-group/rx-utils";
+import { atom } from "@rx-utils/state";
 ```
 
 ## `atom`
@@ -188,7 +188,3 @@ get(click$); // THROWS AN ERROR -
 ## Test
 
     yarn test
-
-## Publish the npm package
-
-    yarn publish
