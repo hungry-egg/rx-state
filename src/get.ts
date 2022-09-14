@@ -1,9 +1,6 @@
-import { StatefulObservable } from "./types";
+import { Subscribable } from "./types";
 
-type Gettable<T> =
-  | { getValue: () => T }
-  | { get: () => T }
-  | StatefulObservable<T>;
+type Gettable<T> = { getValue: () => T } | { get: () => T } | Subscribable<T>;
 
 export function get<T>(obj: Gettable<T>): T {
   if ("getValue" in obj) {
