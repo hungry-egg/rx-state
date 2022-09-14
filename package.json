@@ -1,6 +1,6 @@
 {
   "name": "@hungry-egg/rx-state",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Rx state utils - helpers for managing state, based on RxJS",
   "main": "dist/index.js",
   "module": "dist/index.es.js",
