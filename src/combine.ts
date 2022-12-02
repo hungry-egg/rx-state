@@ -1,10 +1,5 @@
 import { combineLatest } from "rxjs";
-import {
-  distinctUntilChanged,
-  map,
-  publishReplay,
-  refCount,
-} from "rxjs/operators";
+import { map, shareReplay } from "rxjs/operators";
 import { ReadonlyAtom } from "./atom";
 import {
   ObservableLookup,
@@ -14,7 +9,7 @@ import {
 } from "./types";
 
 function arrayToLookup(keys: string[], values: any[]) {
-  const mem: { [key: string]: any; } = {};
+  const mem: { [key: string]: any } = {};
   return keys.reduce((memo, key, i) => {
     memo[key] = values[i];
     return memo;
@@ -71,7 +66,5 @@ export function combine(
       })
     );
   }
-  return new ReadonlyAtom(
-    stream$.pipe(publishReplay(1), refCount(), distinctUntilChanged())
-  );
+  return new ReadonlyAtom(stream$.pipe(shareReplay(1)));
 }

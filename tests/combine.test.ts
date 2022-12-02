@@ -1,4 +1,4 @@
-import { of } from "rxjs";
+import { BehaviorSubject, of } from "rxjs";
 import { WritableAtom, atom, ReadonlyAtom } from "../src/atom";
 import { combine } from "../src/combine";
 
@@ -11,17 +11,26 @@ describe("combine", () => {
   });
 
   it("combines streams", () => {
-    const stream$: ReadonlyAtom<{ n: string[], i: number; }> = combine({ n: names$, i: index$ });
+    const stream$: ReadonlyAtom<{ n: string[]; i: number }> = combine({
+      n: names$,
+      i: index$,
+    });
     expect(stream$.get()).toEqual({ n: ["Fred", "Joy", "Nelson"], i: 1 });
   });
 
   it("works with a combination of atoms and other streams", () => {
-    const stream$: ReadonlyAtom<{ t: number, i: number; }> = combine({ t: of(7), i: index$ });
+    const stream$: ReadonlyAtom<{ t: number; i: number }> = combine({
+      t: of(7),
+      i: index$,
+    });
     expect(stream$.get()).toEqual({ t: 7, i: 1 });
   });
 
   it("allows mapping", () => {
-    const name$: ReadonlyAtom<string> = combine({ n: names$, i: index$ }, ({ i, n }) => n[i]);
+    const name$: ReadonlyAtom<string> = combine(
+      { n: names$, i: index$ },
+      ({ i, n }) => n[i]
+    );
     expect(name$.get()).toEqual("Joy");
   });
 
@@ -31,7 +40,10 @@ describe("combine", () => {
   });
 
   it("allows using an array and mapping", () => {
-    const name$: ReadonlyAtom<string> = combine([names$, index$], ([names, index]) => names[index]);
+    const name$: ReadonlyAtom<string> = combine(
+      [names$, index$],
+      ([names, index]) => names[index]
+    );
     expect(name$.get()).toEqual("Joy");
   });
 
@@ -66,15 +78,27 @@ describe("combine", () => {
   });
 
   it("doesn't call subscription if it hasn't changed", () => {
-    index$.set(1);
-    const name$ = combine([names$, index$], ([names, index]) => names[index]);
+    const i$ = new BehaviorSubject(1);
+    const name$ = combine([names$, i$], ([names, i]) => names[i]);
     const cb = jest.fn();
     const sub = name$.subscribe(cb);
     cb.mockClear();
 
-    index$.set(1);
+    i$.next(1);
     expect(cb).not.toHaveBeenCalled();
 
+    sub.unsubscribe();
+  });
+
+  it("sanity check that only the current value gets shared", () => {
+    const name$ = combine([names$, index$], ([names, i]) => names[i]);
+    index$.set(0);
+    index$.set(1);
+    index$.set(2);
+
+    const cb = jest.fn();
+    const sub = name$.subscribe(cb);
+    expect(cb).toHaveBeenCalledTimes(1);
     sub.unsubscribe();
   });
 });
